@@ -5770,6 +5770,8 @@ std::string CGUIInfoManager::GetItemLabel(const CFileItem *item, int info, std::
   case LISTITEM_DBTYPE:
     if (item->HasVideoInfoTag())
       return item->GetVideoInfoTag()->m_type;
+    if (item->HasMusicInfoTag())
+      return item->GetMusicInfoTag()->GetType();
     break;
   case LISTITEM_DBID:
     if (item->HasVideoInfoTag())
@@ -5926,7 +5928,7 @@ bool CGUIInfoManager::GetItemBool(const CGUIListItem *item, int condition) const
       if (pItem->HasEPGInfoTag())
       {
         CFileItemPtr timer = g_PVRTimers->GetTimerForEpgTag(pItem);
-        if (timer && timer->HasPVRTimerInfoTag() && timer->GetPVRTimerInfoTag()->GetTimerScheduleId() != PVR_TIMER_NO_PARENT)
+        if (timer && timer->HasPVRTimerInfoTag() && timer->GetPVRTimerInfoTag()->GetTimerRuleId() != PVR_TIMER_NO_PARENT)
           return timer->GetPVRTimerInfoTag()->IsActive();
       }
     }

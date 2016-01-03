@@ -187,7 +187,7 @@ bool CLinuxRendererGLES::Configure(unsigned int width, unsigned int height, unsi
 
   m_iLastRenderBuffer = -1;
 
-  if ((m_format == RENDER_FMT_BYPASS) && g_application.GetCurrentPlayer())
+  if ((m_format == RENDER_FMT_BYPASS))
   {
     m_renderFeatures.clear();
     m_scalingMethods.clear();
@@ -447,8 +447,6 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
 
   ManageDisplay();
 
-  g_graphicsContext.BeginPaint();
-
   m_iLastRenderBuffer = index;
 
   if (clear)
@@ -483,8 +481,6 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
 
   VerifyGLState();
   glEnable(GL_BLEND);
-
-  g_graphicsContext.EndPaint();
 }
 
 void CLinuxRendererGLES::RenderUpdateVideo(bool clear, DWORD flags, DWORD alpha)
@@ -880,6 +876,7 @@ void CLinuxRendererGLES::RenderSinglePass(int index, int field)
     pYUVShader->SetField(0);
 
   pYUVShader->SetMatrices(glMatrixProject.Get(), glMatrixModview.Get());
+  pYUVShader->SetForceLimitedColorRange(false);
   pYUVShader->Enable();
 
   GLubyte idx[4] = {0, 1, 3, 2};        //determines order of triangle strip
@@ -1364,7 +1361,6 @@ void CLinuxRendererGLES::DeleteYV12Texture(int index)
   if( fields[FIELD_FULL][0].id == 0 ) return;
 
   /* finish up all textures, and delete them */
-  g_graphicsContext.BeginPaint();  //FIXME
   for(int f = 0;f<MAX_FIELDS;f++)
   {
     for(int p = 0;p<MAX_PLANES;p++)
@@ -1377,7 +1373,6 @@ void CLinuxRendererGLES::DeleteYV12Texture(int index)
       }
     }
   }
-  g_graphicsContext.EndPaint();
 
   for(int p = 0;p<MAX_PLANES;p++)
   {
@@ -1727,7 +1722,6 @@ void CLinuxRendererGLES::DeleteNV12Texture(int index)
   if( fields[FIELD_FULL][0].id == 0 ) return;
 
   // finish up all textures, and delete them
-  g_graphicsContext.BeginPaint();  //FIXME
   for(int f = 0;f<MAX_FIELDS;f++)
   {
     for(int p = 0;p<2;p++)
@@ -1743,7 +1737,6 @@ void CLinuxRendererGLES::DeleteNV12Texture(int index)
     }
     fields[f][2].id = 0;
   }
-  g_graphicsContext.EndPaint();
 
   for(int p = 0;p<2;p++)
   {
